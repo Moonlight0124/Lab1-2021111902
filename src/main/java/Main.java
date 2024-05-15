@@ -47,7 +47,7 @@ public class Main {
                 System.out.println(graph.queryBridgeWords(word1, word2));
                 scanner.nextLine();               // 清除缓冲区中的换行符
             } else if (command.equals("3")) {
-                System.out.println("================根据桥接词生成文本================");
+                System.out.println("===============根据桥接词生成文本===============");
                 System.out.println("请输入一段文本：");
                 String inputText = scanner.nextLine();
                 System.out.println("生成的新文本：");
