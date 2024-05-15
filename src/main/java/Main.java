@@ -27,7 +27,7 @@ public class Main {
         }
         Scanner scanner = new Scanner(System.in);
         while (true) {
-            System.out.println("=================================");
+            System.out.println("=======================================");
             System.out.println("请选择功能：");
             System.out.println("1.显示有向图");
             System.out.println("2.查询桥接词");
@@ -37,67 +37,72 @@ public class Main {
             System.out.println("6.退出");
             System.out.println("请输入功能序号：");
             String command = scanner.nextLine();
-            if (command.equals("1")) {
-                showDirectedGraph(graph, null);
-            } else if (command.equals("2")) {
-                System.out.println("================查询桥接词================");
-                System.out.println("请输入两个word，以空格分隔：");
-                String word1 = scanner.next();
-                String word2 = scanner.next();
-                System.out.println(graph.queryBridgeWords(word1, word2));
-                scanner.nextLine();               // 清除缓冲区中的换行符
-            } else if (command.equals("3")) {
-                System.out.println("===============根据桥接词生成文本===============");
-                System.out.println("请输入一段文本：");
-                String inputText = scanner.nextLine();
-                System.out.println("生成的新文本：");
-                System.out.println(graph.generateNewText(inputText));
-            } else if (command.equals("4")) {
-                System.out.println("===============随机游走算法================");
-                System.out.println("随机游走算法生成的新文本：");
-                String outputText = graph.randomWalk();
-                System.out.println(outputText);
-                FileWriter writer;
-                try {
-                    writer = new FileWriter("./random_walk_output.txt");
-                    writer.write("");   //清空原文件内容
-                    writer.write(outputText);
-                    writer.flush();
-                    writer.close();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
+            switch (command) {
+                case "1" -> showDirectedGraph(graph, null);
+                case "2" -> {
+                    System.out.println("================查询桥接词================");
+                    System.out.println("请输入两个word，以空格分隔：");
+                    String word1 = scanner.next();
+                    String word2 = scanner.next();
+                    System.out.println(graph.queryBridgeWords(word1, word2));
+                    scanner.nextLine();               // 清除缓冲区中的换行符
                 }
-            } else if (command.equals("5")) {
-                System.out.println("================最短路径算法================");
-                String pathText;
-                System.out.print("请输入起始词：");
-                String start = scanner.nextLine();
-                System.out.print("请输入终止词：");
-                String end = scanner.nextLine();
-                //如果end为空，输出start到其他所有结点的最短路径
-                if(end.isEmpty()) {
-                    for(String nodeText : graph.nodeTexts) {
-                        if(!nodeText.equals(start)) {
-                            pathText = calcShortestPath(start, nodeText, graph);
-                            if(pathText != null){
-                                System.out.println(start + "到" + nodeText + "最短路径为："+ pathText);
+                case "3" -> {
+                    System.out.println("===============根据桥接词生成文本===============");
+                    System.out.println("请输入一段文本：");
+                    String inputText = scanner.nextLine();
+                    System.out.println("生成的新文本：");
+                    System.out.println(graph.generateNewText(inputText));
+                }
+                case "4" -> {
+                    System.out.println("===============随机游走算法================");
+                    System.out.println("输入q退出随机游走...");
+                    System.out.println("输入其他字符继续随机游走...");
+                    String outputText = graph.randomWalk();
+                    System.out.println("随机游走算法生成的新文本：");
+                    System.out.println(outputText);
+                    FileWriter writer;
+                    try {
+                        writer = new FileWriter("./random_walk_output.txt");
+                        writer.write("");   //清空原文件内容
+                        writer.write(outputText);
+                        writer.flush();
+                        writer.close();
+                    } catch (IOException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
+                case "5" -> {
+                    System.out.println("================最短路径算法================");
+                    String pathText;
+                    System.out.print("请输入起始词：");
+                    String start = scanner.nextLine();
+                    System.out.print("请输入终止词：");
+                    String end = scanner.nextLine();
+                    //如果end为空，输出start到其他所有结点的最短路径
+                    if (end.isEmpty()) {
+                        for (String nodeText : graph.nodeTexts) {
+                            if (!nodeText.equals(start)) {
+                                pathText = calcShortestPath(start, nodeText, graph);
+                                if (pathText != null) {
+                                    System.out.println(start + "到" + nodeText + "最短路径为：" + pathText);
+                                }
                             }
+                        }
+                    } else {
+                        pathText = calcShortestPath(start, end, graph);
+                        if (pathText != null) {
+                            System.out.println(start + "到" + end + "最短路径是：" + pathText);
+                        } else {
+                            System.out.println(start + "和" + end + "不可达！");
                         }
                     }
                 }
-                else{
-                    pathText = calcShortestPath(start, end, graph);
-                    if(pathText != null){
-                        System.out.println(start + "到" + end + "最短路径是：" + pathText);
-                    }else {
-                        System.out.println(start + "和" + end + "不可达！");
-                    }
+                case "6" -> {
+                    System.out.println("=================退出程序==================");
+                    System.exit(0);
                 }
-            } else if (command.equals("6")) {
-                System.out.println("===============退出程序================");
-                System.exit(0);
-            } else {
-                System.out.println("输入错误，请重新输入！");
+                default -> System.out.println("输入错误，请重新输入！");
             }
         }
     }
@@ -390,6 +395,7 @@ class Graph {
         HashMap<Node, Integer> to = edge.values().iterator().next();
         Node from = edge.keySet().iterator().next();
         String outputText = from.getText() + " ";
+        Scanner scanner = new Scanner(System.in);
         List<Map<Node, HashMap<Node, Integer>>> edgeList = new ArrayList<>(); // 边集合，存放所有已经遍历过的边
         while(edge != null && !edgeList.contains(edge) && to.keySet().iterator().hasNext()){
             edgeList.add(edge);
@@ -398,6 +404,10 @@ class Graph {
                 from = edge.keySet().iterator().next();
                 to = edge.values().iterator().next();
                 outputText += from.getText() + " ";
+            }
+            String inputText = scanner.nextLine();
+            if(inputText.equals("q")){
+                break;
             }
         }
         if(to.keySet().iterator().hasNext()){
