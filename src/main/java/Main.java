@@ -53,7 +53,7 @@ public class Main {
                 System.out.println("生成的新文本：");
                 System.out.println(graph.generateNewText(inputText));
             } else if (command.equals("4")) {
-                System.out.println("================随机游走算法=================");
+                System.out.println("===============随机游走算法================");
                 System.out.println("随机游走算法生成的新文本：");
                 String outputText = graph.randomWalk();
                 System.out.println(outputText);
