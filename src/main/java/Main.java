@@ -40,7 +40,7 @@ public class Main {
             if (command.equals("1")) {
                 showDirectedGraph(graph, null);
             } else if (command.equals("2")) {
-                System.out.println("=================查询桥接词=================");
+                System.out.println("================查询桥接词================");
                 System.out.println("请输入两个word，以空格分隔：");
                 String word1 = scanner.next();
                 String word2 = scanner.next();
