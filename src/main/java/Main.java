@@ -94,7 +94,7 @@ public class Main {
                     }
                 }
             } else if (command.equals("6")) {
-                System.out.println("===============退出程序================");
+                System.out.println("================退出程序=================");
                 System.exit(0);
             } else {
                 System.out.println("输入错误，请重新输入！");
