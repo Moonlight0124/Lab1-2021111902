@@ -162,7 +162,7 @@ public class Main {
                 frame.pack();
                 frame.setVisible(true);
             } catch (IOException | InterruptedException e) {
-                System.out.println("没有生成图片，请检查Graphviz是否安装正确。");
+                System.out.println("没有生成图片，请检查Graphviz是否安装正确");
             }
     }
     public static String calcShortestPath(String st, String ed, Graph graph) {
