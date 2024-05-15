@@ -10,17 +10,20 @@ public class Main {
     public static void main(String[] args) {
         Graph graph = new Graph();
         try {
-            File file = new File("./input.txt");
-            Scanner scanner = new Scanner(file);
-            scanner.useDelimiter("[^A-Za-z]+"); // 使用正则表达式作为分隔符
-            String firstText = scanner.next().toLowerCase();
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("请输入文件路径和文件名：");
+            String fileName = scanner.nextLine();
+            File file = new File(fileName);
+            Scanner scannerFile = new Scanner(file);
+            scannerFile.useDelimiter("[^A-Za-z]+"); // 使用正则表达式作为分隔符
+            String firstText = scannerFile.next().toLowerCase();
             String secondText;
-            while (scanner.hasNext()) {
-                secondText = scanner.next().toLowerCase();
+            while (scannerFile.hasNext()) {
+                secondText = scannerFile.next().toLowerCase();
                 graph.addEdge(new Node(firstText), new Node(secondText));
                 firstText = secondText;
             }
-            scanner.close();
+            scannerFile.close();
         } catch (FileNotFoundException e) {
             System.out.println("找不到文件！");
             e.printStackTrace();
