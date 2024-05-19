@@ -1,8 +1,8 @@
 digraph G {
     "to" [color="red", fontcolor="red"];
     "strange" [color="red", fontcolor="red"];
-    "life";
-    "and";
+    "life" [color="red", fontcolor="red"];
+    "and" [color="red", fontcolor="red"];
     "civilizations";
     "new" [color="red", fontcolor="red"];
     "seek";
@@ -12,9 +12,9 @@ digraph G {
     "to" -> "seek" [label="1"];
     "to" -> "explore" [label="1", color="red", fontcolor="red"];
     "strange" -> "new" [label="1", color="red", fontcolor="red"];
-    "life" -> "and" [label="1"];
+    "life" -> "and" [label="1", color="red", fontcolor="red"];
     "and" -> "new" [label="1"];
-    "new" -> "life" [label="1"];
+    "new" -> "life" [label="1", color="red", fontcolor="red"];
     "new" -> "civilizations" [label="1"];
     "new" -> "worlds" [label="1"];
     "seek" -> "out" [label="1"];

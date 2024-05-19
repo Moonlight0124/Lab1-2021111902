@@ -1,4 +1,7 @@
+import javax.imageio.ImageIO;
 import javax.swing.*;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
 import java.util.HashMap;
@@ -116,7 +119,7 @@ public class Main {
             for (Node from : G.edges.keySet()) {
                 builder.append("    \"").append(from.getText()).append("\"");
                 if(nodeList != null && nodeList.contains(from)){
-                    // 节点在nodeList中，设置节点颜色为蓝色
+                    // 节点在nodeList中，设置节点颜色为红色
                     builder.append(" [color=\"red\", fontcolor=\"red\"]");
                 }
                 builder.append(";\n");
@@ -148,15 +151,22 @@ public class Main {
                 writer.write(outputText);
                 writer.flush();
                 writer.close();
+
                 Runtime.getRuntime().exec("dot -Tpng .\\directed-graph.dot -o graph.png"); //使用Graphviz生成图片，需要先安装Graphviz
-                Thread.sleep(1000); //等待图片生成
+                Thread.sleep(1500); //等待图片生成
+
                 FileInputStream inStream = new FileInputStream("graph.png");
-                byte[] graph = new byte[inStream.available()];
-                inStream.read(graph);
-                inStream.close();
+                BufferedImage bufferedImage = ImageIO.read(inStream);
+
+                int scaledWidth = bufferedImage.getWidth() * 3/ 4;
+                int scaledHeight = bufferedImage.getHeight() * 3/ 4;  // 将高度缩小一半
+                Image scaledImage = bufferedImage.getScaledInstance(scaledWidth, scaledHeight, Image.SCALE_SMOOTH);
+                BufferedImage bufferedScaledImage = new BufferedImage(scaledWidth, scaledHeight, BufferedImage.TYPE_INT_ARGB);
+
+                bufferedScaledImage.getGraphics().drawImage(scaledImage, 0, 0, null);
                 JFrame frame = new JFrame("有向图展示");
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                ImageIcon icon = new ImageIcon(graph);
+                ImageIcon icon = new ImageIcon(bufferedScaledImage);
                 JLabel label = new JLabel(icon);
                 frame.getContentPane().add(label);
                 frame.pack();
