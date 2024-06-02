@@ -1,14 +1,11 @@
-import javax.imageio.ImageIO;
 import javax.swing.*;
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Main {
+public class Lab1 {
 
     public static void main(String[] args) {
         Graph graph = new Graph();
@@ -156,21 +153,18 @@ public class Main {
                 Thread.sleep(1500); //等待图片生成
 
                 FileInputStream inStream = new FileInputStream("graph.png");
-                BufferedImage bufferedImage = ImageIO.read(inStream);
+                byte[] graph = new byte[inStream.available()];
+                inStream.read(graph);
+                inStream.close();
 
-                int scaledWidth = bufferedImage.getWidth() * 3/ 4;
-                int scaledHeight = bufferedImage.getHeight() * 3/ 4;  // 将高度缩小一半
-                Image scaledImage = bufferedImage.getScaledInstance(scaledWidth, scaledHeight, Image.SCALE_SMOOTH);
-                BufferedImage bufferedScaledImage = new BufferedImage(scaledWidth, scaledHeight, BufferedImage.TYPE_INT_ARGB);
-
-                bufferedScaledImage.getGraphics().drawImage(scaledImage, 0, 0, null);
                 JFrame frame = new JFrame("有向图展示");
                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                ImageIcon icon = new ImageIcon(bufferedScaledImage);
+                ImageIcon icon = new ImageIcon(graph);
                 JLabel label = new JLabel(icon);
                 frame.getContentPane().add(label);
                 frame.pack();
                 frame.setVisible(true);
+
             } catch (IOException | InterruptedException e) {
                 System.out.println("没有生成图片，请检查Graphviz是否安装正确");
             }
@@ -250,6 +244,9 @@ public class Main {
         }
         showDirectedGraph(graph, path);
         pathText += "\n"+ "最短路径长度为：" + distance.get(end);
+        if(distance.get(end) == Integer.MAX_VALUE){
+            return null;
+        }
         return pathText;
     }
 }
@@ -326,7 +323,7 @@ class Graph {
         return edges.getOrDefault(from, new HashMap<>()).getOrDefault(to, 0);
     }
 
-    public String getBridgeWord(String word1, String word2) {
+    public List<String> getBridgeWord(String word1, String word2) {
         Node from = this.getNode(word1);
         Node to = this.getNode(word2);
         if(from == null || to == null){
@@ -334,6 +331,7 @@ class Graph {
         }
         // 找到word1的所有邻居节点adjNodes
         HashMap<Node, Integer> adjNodes = this.getEdges(from);
+        List<String> bridgeWords = new ArrayList<>();
         if (adjNodes == null) {
             return null;
         } else{
@@ -345,12 +343,12 @@ class Graph {
                 for (Map.Entry<Node, Integer> bridgeAdjEntry : bridgeAdjNodes.entrySet()) {
                     Node bridgeTo = bridgeAdjEntry.getKey();
                     if (bridgeTo.getText().equals(to.getText())) {
-                        return bridge.getText();
+                        bridgeWords.add(bridge.getText());
                     }
                 }
             }
         }
-        return null;
+        return bridgeWords;
     }
     public String queryBridgeWords(String word1, String word2) {
         Node from = this.getNode(word1);
@@ -362,11 +360,7 @@ class Graph {
         }else if(to == null){
             return "No \""+ word2 +"\" in the graph!";
         }
-        List<String> bridgeWords = new ArrayList<>();
-        String bridgeWord = getBridgeWord(word1, word2);
-        if(bridgeWord != null){
-            bridgeWords.add(bridgeWord);
-        }
+        List<String> bridgeWords =getBridgeWord(word1, word2);
 
         if(bridgeWords.size() == 0){
             return "No bridge words from \""+ word1 +"\" to \""+ word2 +"\"!";
@@ -383,8 +377,9 @@ class Graph {
         for (int i = 0; i < words.length - 1; i++) {
             String text1 = words[i].toLowerCase();
             String text2 = words[i+1].toLowerCase();
-            String bridgeWord = this.getBridgeWord(text1, text2);
-            if(bridgeWord != null){
+            List<String> bridgeWords = this.getBridgeWord(text1, text2);
+            if(bridgeWords != null && !bridgeWords.isEmpty()){
+                String bridgeWord = bridgeWords.get(new Random().nextInt(bridgeWords.size()));
                 outputText += bridgeWord + " " + text2 + " ";
             } else {
                 outputText += text2 + " ";
