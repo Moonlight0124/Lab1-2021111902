@@ -7,6 +7,7 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -300,12 +301,16 @@ public class Main {
   /**
    * 查询桥接词.
    *
-   * @param word1    起始词
-   * @param word2    终止词
-   * @param graph    有向图对象
+   * @param word1 起始词
+   * @param word2 终止词
+   * @param graph 有向图对象
    * @return 查询结果字符串
    */
   public static String queryBridgeWords(Graph graph, String word1, String word2) {
+    if (graph == null) {
+      System.out.println("图为空");
+      return null;
+    }
     Node from = graph.getNode(word1);
     Node to = graph.getNode(word2);
     if (from == null && to == null) {
@@ -318,19 +323,15 @@ public class Main {
     // 找到word1的所有邻居节点adjNodes
     HashMap<Node, Integer> adjNodes = graph.getEdges(from);
     List<String> bridgeWords = new ArrayList<>();
-    if (adjNodes == null) {
-      return null;
-    } else {
-      // 遍历word1的所有邻居节点adjNodes
-      for (Map.Entry<Node, Integer> adjEntry : adjNodes.entrySet()) {
-        Node bridge = adjEntry.getKey();
-        HashMap<Node, Integer> bridgeAdjNodes = graph.getEdges(bridge);
-        // 遍历adjNodes的邻居节点bridgeAdjNodes
-        for (Map.Entry<Node, Integer> bridgeAdjEntry : bridgeAdjNodes.entrySet()) {
-          Node bridgeTo = bridgeAdjEntry.getKey();
-          if (bridgeTo.getText().equals(to.getText())) {
-            bridgeWords.add(bridge.getText());
-          }
+    // 遍历word1的所有邻居节点adjNodes
+    for (Map.Entry<Node, Integer> adjEntry : adjNodes.entrySet()) {
+      Node bridge = adjEntry.getKey();
+      HashMap<Node, Integer> bridgeAdjNodes = graph.getEdges(bridge);
+      // 遍历adjNodes的邻居节点bridgeAdjNodes
+      for (Map.Entry<Node, Integer> bridgeAdjEntry : bridgeAdjNodes.entrySet()) {
+        Node bridgeTo = bridgeAdjEntry.getKey();
+        if (bridgeTo.getText().equals(to.getText())) {
+          bridgeWords.add(bridge.getText());
         }
       }
     }
@@ -341,6 +342,7 @@ public class Main {
       return "The bridge words from \"" + word1 + "\" to \""
           + word2 + "\" is:" + bridgeWords.get(0);
     } else {
+      Collections.sort(bridgeWords);
       return "The bridge words from \"" + word1 + "\" to \""
           + word2 + "\" are:" + bridgeWords.toString();
     }
